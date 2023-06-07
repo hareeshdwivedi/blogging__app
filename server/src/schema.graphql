@@ -1,0 +1,77 @@
+scalar Upload
+scalar DateTime
+
+type Query {
+  feed(
+    filter: String
+    user: String
+    explore: Boolean
+    skip: Int
+    first: Int
+    orderBy: PostOrderByInput
+  ): Feed!
+}
+
+type Feed {
+  posts: [Post!]!
+  count: Int!
+}
+
+enum PostOrderByInput {
+  text_ASC
+  text_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type Mutation {
+  publish(picture: Upload, text: String!, link: String): Post!
+  reblog(picture: String, text: String!, link: String, op: String!): Post!
+  signup(email: String!, password: String!, name: String!): AuthPayload
+  login(email: String!, password: String!): AuthPayload
+  like(postId: ID): Like
+  follow(userId: ID): Follow
+}
+
+type Post {
+  id: ID!
+  createdAt: DateTime!
+  text: String!
+  imgUrl: String
+  link: String
+  likes: [Like!]!
+  op: User!
+  reblogPoster: User
+}
+
+type Like {
+  id: ID!
+  post: Post!
+  user: User!
+}
+
+type Follow {
+  id: ID!
+  follower: User!
+  following: User!
+}
+
+type Subscription {
+  newPost: Post
+  newLike: Like
+}
+
+type AuthPayload {
+  token: String
+  user: User
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  posts: [Post!]!
+  likes: [Like!]!
+  following: [Follow!]!
+  followers: [Follow!]!
+}
